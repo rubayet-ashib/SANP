@@ -1,20 +1,18 @@
 <?php
-    include("db_connect.php");
-    $db = connect();
+include("db_connect.php");
+$db = connect();
 
-    session_start();
-    if(!isset($_SESSION['status']))
-    {
-        header("location: login.php");
-        return;
-    }
+session_start();
+if (!isset($_SESSION['status'])) {
+    header("location: login.php");
+    return;
+}
 
-    // Redirect if not student
-    if($_SESSION['role'] != "student")
-    {
-        header("location: alumni-news_feed.php");
-        exit;
-    }
+// Redirect if not student
+if ($_SESSION['role'] == "alumni") {
+    header("location: alumni-news_feed.php");
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -68,13 +66,13 @@
                                 <li class="nav-item"><a class="nav-link" href="resources-resources.php">Resources</a>
                                 </li>
                                 <!-- Visible to admin only -->
-                                <?php if($_SESSION['role'] == "admin"){ ?>
-                                <li class="nav-item"><a class="nav-link" href="admin_panel-events_approval.php">Admin
-                                        Panel</a>
-                                </li>
+                                <?php if ($_SESSION['role'] == "admin") { ?>
+                                    <li class="nav-item"><a class="nav-link" href="admin_panel-events_approval.php">Admin
+                                            Panel</a>
+                                    </li>
                                 <?php } ?>
                                 <li class="nav-item"><a class="nav-link" href="donate.php">Donate</a></li>
-                                <li class="nav-item"><a class="nav-link" href="profile.php">Profile</a></li>
+                                <li class="nav-item"><a class="nav-link" href="profile-my_profile.php">Profile</a></li>
                             </ul>
                         </div>
                     </div>
@@ -98,10 +96,6 @@
                             <hr>
                         </li>
                         <li><a href="student-events.php">Events</a></li>
-                        <li>
-                            <hr>
-                        </li>
-                        <li><a href="student-mentorship.php">Mentorship</a></li>
                         <li>
                             <hr>
                         </li>
@@ -129,7 +123,6 @@
                     <li><a href="student-batch.php" class="active">Batch</a></li>
                     <li><a href="student-notices.php">Notices</a></li>
                     <li><a href="student-events.php">Events</a></li>
-                    <li><a href="student-mentorship.php">Mentorship</a></li>
                     <li><a href="student-search.php">Search</a></li>
                 </ul>
             </div>
@@ -138,14 +131,16 @@
         <div class="post-container">
 
             <?php
-                // Prepare and execute query
-                $sql = "select * from batches where batch_id = ?";
-                $stmt = $db->prepare($sql);
-                if (!$stmt) { die("Prepare failed: " . $db->error); }
-                $stmt->bind_param("i", $_SESSION['batch_id']);
-                $stmt->execute();
-                $rel = $stmt->get_result();
-                $data = $rel->fetch_assoc();
+            // Prepare and execute query
+            $sql = "select * from batches where batch_id = ?";
+            $stmt = $db->prepare($sql);
+            if (!$stmt) {
+                die("Prepare failed: " . $db->error);
+            }
+            $stmt->bind_param("i", $_SESSION['batch_id']);
+            $stmt->execute();
+            $rel = $stmt->get_result();
+            $data = $rel->fetch_assoc();
             ?>
             <div class="batch-container d-flex align-items-center">
                 <div class="batch-logo">

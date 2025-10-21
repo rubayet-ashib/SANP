@@ -1,13 +1,12 @@
 <?php
-    include("db_connect.php");
-    $db = connect();
+include("db_connect.php");
+$db = connect();
 
-    session_start();
-    if(!isset($_SESSION['status']))
-    {
-        header("location: login.php");
-        return;
-    }
+session_start();
+if (!isset($_SESSION['status'])) {
+    header("location: login.php");
+    return;
+}
 ?>
 
 <!DOCTYPE html>
@@ -61,13 +60,13 @@
                                 <li class="nav-item"><a class="nav-link" href="resources-resources.php">Resources</a>
                                 </li>
                                 <!-- Visible to admin only -->
-                                <?php if($_SESSION['role'] == "admin"){ ?>
-                                <li class="nav-item"><a class="nav-link" href="admin_panel-events_approval.php">Admin
-                                        Panel</a>
-                                </li>
+                                <?php if ($_SESSION['role'] == "admin") { ?>
+                                    <li class="nav-item"><a class="nav-link" href="admin_panel-events_approval.php">Admin
+                                            Panel</a>
+                                    </li>
                                 <?php } ?>
                                 <li class="nav-item"><a class="nav-link" href="donate.php">Donate</a></li>
-                                <li class="nav-item"><a class="nav-link" href="profile.php">Profile</a></li>
+                                <li class="nav-item"><a class="nav-link" href="profile-my_profile.php">Profile</a></li>
                             </ul>
                         </div>
                     </div>

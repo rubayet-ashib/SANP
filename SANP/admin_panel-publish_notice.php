@@ -1,28 +1,23 @@
 <?php
-    include("db_connect.php");
-    $db = connect();
+include("db_connect.php");
+$db = connect();
 
-    session_start();
-    if(!isset($_SESSION['status']))
-    {
-        header("location: login.php");
-        return;
-    }
+session_start();
+if (!isset($_SESSION['status'])) {
+    header("location: login.php");
+    return;
+}
 
-    // Redirect if not admin
-    if($_SESSION['role'] != "admin")
-    {
-        if($_SESSION['role'] == "student")
-        {
-            header("location: student-news_feed.php");
-            exit;
-        }
-        else
-        {
-            header("location: alumni-news_feed.php");
-            exit;
-        }
+// Redirect if not admin
+if ($_SESSION['role'] != "admin") {
+    if ($_SESSION['role'] == "student") {
+        header("location: student-news_feed.php");
+        exit;
+    } else {
+        header("location: alumni-news_feed.php");
+        exit;
     }
+}
 ?>
 
 <!DOCTYPE html>
@@ -78,7 +73,7 @@
                                         href="admin_panel-events_approval.php">Admin Panel</a>
                                 </li>
                                 <li class="nav-item"><a class="nav-link" href="donate.php">Donate</a></li>
-                                <li class="nav-item"><a class="nav-link" href="profile.php">Profile</a></li>
+                                <li class="nav-item"><a class="nav-link" href="profile-my_profile.php">Profile</a></li>
                             </ul>
                         </div>
                     </div>

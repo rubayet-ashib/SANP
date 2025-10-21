@@ -1,13 +1,12 @@
 <?php
-    include("db_connect.php");
-    $db = connect();
+include("db_connect.php");
+$db = connect();
 
-    session_start();
-    if(!isset($_SESSION['status']))
-    {
-        header("location: login.php");
-        return;
-    }
+session_start();
+if (!isset($_SESSION['status'])) {
+    header("location: login.php");
+    return;
+}
 ?>
 
 <!DOCTYPE html>
@@ -17,7 +16,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="resources/favicon.svg" type="image/x-icon">
-    <title>Student - Mentorship</title>
+    <title>Profile - Mentorship</title>
 
     <!-- Bootstrap CSS -->
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -53,7 +52,7 @@
                         <div class="collapse justify-content-end navbar-collapse" id="navbarNav">
                             <ul class="navbar-nav">
 
-                                <li class="nav-item"><a class="nav-link active"
+                                <li class="nav-item"><a class="nav-link"
                                         href="student-news_feed.php">Student</a></li>
                                 <li class="nav-item"><a class="nav-link" href="alumni-news_feed.php">Alumni</a></li>
                                 <li class="nav-item"><a class="nav-link" href="jobs_internships-posts.php">Jobs &
@@ -61,13 +60,13 @@
                                 <li class="nav-item"><a class="nav-link" href="resources-resources.php">Resources</a>
                                 </li>
                                 <!-- Visible to admin only -->
-                                <?php if($_SESSION['role'] == "admin"){ ?>
-                                <li class="nav-item"><a class="nav-link" href="admin_panel-events_approval.php">Admin
-                                        Panel</a>
-                                </li>
+                                <?php if ($_SESSION['role'] == "admin") { ?>
+                                    <li class="nav-item"><a class="nav-link" href="admin_panel-events_approval.php">Admin
+                                            Panel</a>
+                                    </li>
                                 <?php } ?>
                                 <li class="nav-item"><a class="nav-link" href="donate.php">Donate</a></li>
-                                <li class="nav-item"><a class="nav-link" href="profile.php">Profile</a></li>
+                                <li class="nav-item"><a class="nav-link active" href="profile-my_profile.php">Profile</a></li>
                             </ul>
                         </div>
                     </div>
@@ -78,58 +77,47 @@
             <div class="sidebar-div">
                 <div class="sidebar d-none d-md-flex justify-content-center">
                     <ul>
-                        <li><a href="student-news_feed.php">News Feed</a></li>
+                        <li><a href="profile-my_profile.php">My Profile</a></li>
                         <li>
                             <hr>
                         </li>
-                        <!-- Visible to students only -->
-                        <?php if($_SESSION['role'] != "alumni"){ ?>
-                        <li><a href="student-batch.php">Batch</a></li>
+                        <li><a href="profile-my_posts.php">My Posts</a></li>
                         <li>
                             <hr>
                         </li>
-                        <?php } ?>
-                        <li><a href="student-notices.php">Notices</a></li>
+                        <li><a href="profile-mentorship.php" class="active">Mentorship</a></li>
                         <li>
                             <hr>
                         </li>
-                        <li><a href="student-events.php">Events</a></li>
+                        <li><a href="#">Edit Profile</a></li>
                         <li>
                             <hr>
                         </li>
-                        <li><a href="student-mentorship.php" class="active">Mentorship</a></li>
-                        <li>
-                            <hr>
-                        </li>
-                        <li><a href="student-search.php">Search</a></li>
+                        <li><a href="logout-manager.php">Log Out</a></li>
                     </ul>
                 </div>
             </div>
         </div>
 
-        <!-- Sidebar Toggle Button -->
-        <button class="btn sidebar-toggle d-md-none" type="button" data-bs-toggle="offcanvas"
+        <!-- Sidebar Toggle div -->
+        <div class="sidebar-toggle btn d-md-none" type="div" data-bs-toggle="offcanvas"
             data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">
             <img src="icons/sidebar-expand.svg" alt="Sidebar Expand" style="height: 32px; width: 32px;">
-        </button>
+        </div>
 
         <!-- Sidebar offcanvas -->
         <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarOffcanvas"
             aria-labelledby="sidebarOffcanvasLabel">
             <div class="offcanvas-header">
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                <div type="div" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></div>
             </div>
             <div class="offcanvas-body">
                 <ul>
-                    <li><a href="student-news_feed.php">News Feed</a></li>
-                    <!-- Visible to students only -->
-                    <?php if($_SESSION['role'] != "alumni"){ ?>
-                    <li><a href="student-batch.php">Batch</a></li>
-                    <?php } ?>
-                    <li><a href="student-notices.php">Notices</a></li>
-                    <li><a href="student-events.php">Events</a></li>
-                    <li><a href="student-mentorship.php" class="active">Mentorship</a></li>
-                    <li><a href="student-search.php">Search</a></li>
+                    <li><a href="profile-my_profile.php">My Profile</a></li>
+                    <li><a href="profile-my_posts.php">My Posts</a></li>
+                    <li><a href="profile-mentorship.php" class="active">Mentorship</a></li>
+                    <li><a href="#">Edit Profile</a></li>
+                    <li><a href="logout-manager.php">Log Out</a></li>
                 </ul>
             </div>
         </div>

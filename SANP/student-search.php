@@ -1,13 +1,12 @@
 <?php
-    include("db_connect.php");
-    $db = connect();
+include("db_connect.php");
+$db = connect();
 
-    session_start();
-    if(!isset($_SESSION['status']))
-    {
-        header("location: login.php");
-        return;
-    }
+session_start();
+if (!isset($_SESSION['status'])) {
+    header("location: login.php");
+    return;
+}
 ?>
 
 <!DOCTYPE html>
@@ -61,13 +60,13 @@
                                 <li class="nav-item"><a class="nav-link" href="resources-resources.php">Resources</a>
                                 </li>
                                 <!-- Visible to admin only -->
-                                <?php if($_SESSION['role'] == "admin"){ ?>
-                                <li class="nav-item"><a class="nav-link" href="admin_panel-events_approval.php">Admin
-                                        Panel</a>
-                                </li>
+                                <?php if ($_SESSION['role'] == "admin") { ?>
+                                    <li class="nav-item"><a class="nav-link" href="admin_panel-events_approval.php">Admin
+                                            Panel</a>
+                                    </li>
                                 <?php } ?>
                                 <li class="nav-item"><a class="nav-link" href="donate.php">Donate</a></li>
-                                <li class="nav-item"><a class="nav-link" href="profile.php">Profile</a></li>
+                                <li class="nav-item"><a class="nav-link" href="profile-my_profile.php">Profile</a></li>
                             </ul>
                         </div>
                     </div>
@@ -83,21 +82,17 @@
                             <hr>
                         </li>
                         <!-- Visible to students only -->
-                        <?php if($_SESSION['role'] != "alumni"){ ?>
-                        <li><a href="student-batch.php">Batch</a></li>
-                        <li>
-                            <hr>
-                        </li>
+                        <?php if ($_SESSION['role'] != "alumni") { ?>
+                            <li><a href="student-batch.php">Batch</a></li>
+                            <li>
+                                <hr>
+                            </li>
                         <?php } ?>
                         <li><a href="student-notices.php">Notices</a></li>
                         <li>
                             <hr>
                         </li>
                         <li><a href="student-events.php">Events</a></li>
-                        <li>
-                            <hr>
-                        </li>
-                        <li><a href="student-mentorship.php">Mentorship</a></li>
                         <li>
                             <hr>
                         </li>
@@ -123,12 +118,11 @@
                 <ul>
                     <li><a href="student-news_feed.php">News Feed</a></li>
                     <!-- Visible to students only -->
-                    <?php if($_SESSION['role'] != "alumni"){ ?>
-                    <li><a href="student-batch.php">Batch</a></li>
+                    <?php if ($_SESSION['role'] != "alumni") { ?>
+                        <li><a href="student-batch.php">Batch</a></li>
                     <?php } ?>
                     <li><a href="student-notices.php">Notices</a></li>
                     <li><a href="student-events.php">Events</a></li>
-                    <li><a href="student-mentorship.php">Mentorship</a></li>
                     <li><a href="student-search.php" class="active">Search</a></li>
                 </ul>
             </div>

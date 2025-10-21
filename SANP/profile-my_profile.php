@@ -1,13 +1,12 @@
 <?php
-    include("db_connect.php");
-    $db = connect();
+include("db_connect.php");
+$db = connect();
 
-    session_start();
-    if(!isset($_SESSION['status']))
-    {
-        header("location: login.php");
-        return;
-    }
+session_start();
+if (!isset($_SESSION['status'])) {
+    header("location: login.php");
+    return;
+}
 ?>
 
 <!DOCTYPE html>
@@ -17,7 +16,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="resources/favicon.svg" type="image/x-icon">
-    <title>Profile</title>
+    <title>Profile - My Profile</title>
 
     <!-- Bootstrap CSS -->
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -60,19 +59,66 @@
                                 <li class="nav-item"><a class="nav-link" href="resources-resources.php">Resources</a>
                                 </li>
                                 <!-- Visible to admin only -->
-                                <?php if($_SESSION['role'] == "admin"){ ?>
-                                <li class="nav-item"><a class="nav-link" href="admin_panel-events_approval.php">Admin
-                                        Panel</a>
-                                </li>
+                                <?php if ($_SESSION['role'] == "admin") { ?>
+                                    <li class="nav-item"><a class="nav-link" href="admin_panel-events_approval.php">Admin
+                                            Panel</a>
+                                    </li>
                                 <?php } ?>
                                 <li class="nav-item"><a class="nav-link" href="donate.php">Donate</a></li>
-                                <li class="nav-item"><a class="nav-link active" href="profile.php">Profile</a></li>
+                                <li class="nav-item"><a class="nav-link active" href="profile-my_profile.php">Profile</a></li>
                             </ul>
                         </div>
                     </div>
                 </nav>
             </div>
 
+            <!-- Sidebar -->
+            <div class="sidebar-div">
+                <div class="sidebar d-none d-md-flex justify-content-center">
+                    <ul>
+                        <li><a href="profile-my_profile.php" class="active">My Profile</a></li>
+                        <li>
+                            <hr>
+                        </li>
+                        <li><a href="profile-my_posts.php">My Posts</a></li>
+                        <li>
+                            <hr>
+                        </li>
+                        <li><a href="profile-mentorship.php">Mentorship</a></li>
+                        <li>
+                            <hr>
+                        </li>
+                        <li><a href="#">Edit Profile</a></li>
+                        <li>
+                            <hr>
+                        </li>
+                        <li><a href="logout-manager.php">Log Out</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Toggle div -->
+        <div class="sidebar-toggle btn d-md-none" type="div" data-bs-toggle="offcanvas"
+            data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">
+            <img src="icons/sidebar-expand.svg" alt="Sidebar Expand" style="height: 32px; width: 32px;">
+        </div>
+
+        <!-- Sidebar offcanvas -->
+        <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarOffcanvas"
+            aria-labelledby="sidebarOffcanvasLabel">
+            <div class="offcanvas-header">
+                <div type="div" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></div>
+            </div>
+            <div class="offcanvas-body">
+                <ul>
+                    <li><a href="profile-my_profile.php" class="active">My Profile</a></li>
+                    <li><a href="profile-my_posts.php">My Posts</a></li>
+                    <li><a href="profile-mentorship.php">Mentorship</a></li>
+                    <li><a href="#">Edit Profile</a></li>
+                    <li><a href="logout-manager.php">Log Out</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 

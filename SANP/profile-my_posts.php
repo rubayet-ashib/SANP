@@ -7,17 +7,6 @@ if (!isset($_SESSION['status'])) {
     header("location: login.php");
     return;
 }
-
-// Redirect if not admin
-if ($_SESSION['role'] != "admin") {
-    if ($_SESSION['role'] == "student") {
-        header("location: student-news_feed.php");
-        exit;
-    } else {
-        header("location: alumni-news_feed.php");
-        exit;
-    }
-}
 ?>
 
 <!DOCTYPE html>
@@ -27,7 +16,7 @@ if ($_SESSION['role'] != "admin") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="resources/favicon.svg" type="image/x-icon">
-    <title>Admin Panel - Jobs Approval</title>
+    <title>Profile - My Posts</title>
 
     <!-- Bootstrap CSS -->
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -63,17 +52,21 @@ if ($_SESSION['role'] != "admin") {
                         <div class="collapse justify-content-end navbar-collapse" id="navbarNav">
                             <ul class="navbar-nav">
 
-                                <li class="nav-item"><a class="nav-link" href="student-news_feed.php">Student</a></li>
+                                <li class="nav-item"><a class="nav-link"
+                                        href="student-news_feed.php">Student</a></li>
                                 <li class="nav-item"><a class="nav-link" href="alumni-news_feed.php">Alumni</a></li>
                                 <li class="nav-item"><a class="nav-link" href="jobs_internships-posts.php">Jobs &
                                         Internships</a></li>
                                 <li class="nav-item"><a class="nav-link" href="resources-resources.php">Resources</a>
                                 </li>
-                                <li class="nav-item"><a class="nav-link active"
-                                        href="admin_panel-events_approval.php">Admin Panel</a>
-                                </li>
+                                <!-- Visible to admin only -->
+                                <?php if ($_SESSION['role'] == "admin") { ?>
+                                    <li class="nav-item"><a class="nav-link" href="admin_panel-events_approval.php">Admin
+                                            Panel</a>
+                                    </li>
+                                <?php } ?>
                                 <li class="nav-item"><a class="nav-link" href="donate.php">Donate</a></li>
-                                <li class="nav-item"><a class="nav-link" href="profile-my_profile.php">Profile</a></li>
+                                <li class="nav-item"><a class="nav-link active" href="profile-my_profile.php">Profile</a></li>
                             </ul>
                         </div>
                     </div>
@@ -84,19 +77,23 @@ if ($_SESSION['role'] != "admin") {
             <div class="sidebar-div">
                 <div class="sidebar d-none d-md-flex justify-content-center">
                     <ul>
-                        <li><a href="admin_panel-events_approval.php">Events Approval</a></li>
+                        <li><a href="profile-my_profile.php">My Profile</a></li>
                         <li>
                             <hr>
                         </li>
-                        <li><a href="admin_panel-jobs_approval.php" class="active">Jobs Approval</a></li>
+                        <li><a href="profile-my_posts.php" class="active">My Posts</a></li>
                         <li>
                             <hr>
                         </li>
-                        <li><a href="admin_panel-publish_notice.php">Publish Notice</a></li>
+                        <li><a href="profile-mentorship.php">Mentorship</a></li>
                         <li>
                             <hr>
                         </li>
-                        <li><a href="admin_panel-manage_student.php">Manage Student</a></li>
+                        <li><a href="#">Edit Profile</a></li>
+                        <li>
+                            <hr>
+                        </li>
+                        <li><a href="logout-manager.php">Log Out</a></li>
                     </ul>
                 </div>
             </div>
@@ -112,17 +109,19 @@ if ($_SESSION['role'] != "admin") {
         <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarOffcanvas"
             aria-labelledby="sidebarOffcanvasLabel">
             <div class="offcanvas-header">
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                <div type="div" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></div>
             </div>
             <div class="offcanvas-body">
                 <ul>
-                    <li><a href="admin_panel-events_approval.php">Events Approval</a></li>
-                    <li><a href="admin_panel-jobs_approval.php" class="active">Jobs Approval</a></li>
-                    <li><a href="admin_panel-publish_notice.php">Publish Notice</a></li>
-                    <li><a href="admin_panel-manage_student.php">Manage Student</a></li>
+                    <li><a href="profile-my_profile.php">My Profile</a></li>
+                    <li><a href="profile-my_posts.php" class="active">My Posts</a></li>
+                    <li><a href="profile-mentorship.php">Mentorship</a></li>
+                    <li><a href="#">Edit Profile</a></li>
+                    <li><a href="logout-manager.php">Log Out</a></li>
                 </ul>
             </div>
         </div>
+
         <!-- Post Container -->
         <div class="post-container">
 
@@ -140,16 +139,34 @@ if ($_SESSION['role'] != "admin") {
                         </div>
                     </div>
 
-                    <!-- Contact user -->
-                    <div class="d-flex flex-column align-items-end">
-                        <button class="download-btn">Contact</button>
+                    <!-- More option trigger button -->
+                    <div type="div" class="more-option" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        <img src="icons/more-option.svg" alt="">
+                    </div>
+
+                    <!-- More option menu -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <div class="more-option-btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                        <img src="icons/close-btn.svg" alt="">
+                                    </div>
+                                </div>
+                                <!-- Modal body -->
+                                <div class="option-body d-flex flex-column justify-content-center align-items-center">
+                                    <span class="w-100 ">Edit</span>
+                                    <span class="w-100 ">Delete</span>
+                                    <span class="w-100 ">Report</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Description -->
-                <div class="text-wrapper pb-3">
-                    <p class="notice-title mb-0">Company: Google</p>
-                    <p class="notice-title mb-2">Vacancies: 5</p>
+                <div class="text-wrapper">
                     <p class="description mb-2">
                         Lorem ipsum, dolor sit amet consectetur adipisicing elit. Rerum aperiam aut inventore
                         esse
@@ -172,24 +189,30 @@ if ($_SESSION['role'] != "admin") {
                     </p>
                 </div>
 
+                <!-- Post Image -->
+                <div class="post-image mt-2">
+                    <img src="https://images.unsplash.com/photo-1421789665209-c9b2a435e3dc?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                        alt="" />
+                </div>
+
                 <!-- Post Footer -->
                 <div class="post-footer d-flex align-items-center">
-                    <!-- Approve Section -->
-                    <div class="approve-container flex-fill d-flex justify-content-center align-items-center">
+                    <!-- Like Section -->
+                    <div class="like-container flex-fill d-flex justify-content-center align-items-center">
                         <div class="like d-flex align-items-center gap-3">
-                            <img src="icons/approve.svg" alt="">
-                            <span class="count">Approve</span>
+                            <img src="icons/like.svg" alt="">
+                            <span class="count like-count">321</span>
                         </div>
                     </div>
 
                     <!-- Divider -->
                     <div class="divider"></div>
 
-                    <!-- Reject Section -->
-                    <div class="reject-container flex-fill d-flex justify-content-center align-items-center">
+                    <!-- Comment Section -->
+                    <div class="comment-container flex-fill d-flex justify-content-center align-items-center">
                         <div class="comment d-flex align-items-center gap-3">
-                            <img src="icons/reject.svg" alt="">
-                            <span class="count">Reject</span>
+                            <img src="icons/comment.svg" alt="">
+                            <span class="count comment-count">123</span>
                         </div>
                     </div>
                 </div>
