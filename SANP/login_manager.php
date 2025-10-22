@@ -16,7 +16,7 @@
     $db = connect();
 
     // Prepare and execute query
-    $sql = "select * from users where sid = ?";
+    $sql = "SELECT * FROM users WHERE sid = ?";
     $stmt = $db->prepare($sql);
     if (!$stmt) { die("Prepare failed: " . $db->error); }
     $stmt->bind_param("s", $sid);
@@ -27,7 +27,7 @@
     if($data = $rel->fetch_assoc())
     {
         // Verify password
-        if($password != $data['password'])
+        if(!password_verify($password, $data['password']))
         {
             $_SESSION['invalid_status'] = 1;
             header("location: login.php");
@@ -38,7 +38,6 @@
         $_SESSION['status'] = 1;
         $_SESSION['sid'] = $sid;
         $_SESSION['role'] = $data['role'];
-        $_SESSION['batch_id'] = $data['batch_id'];
 
         if($data['role'] == 'alumni')
         {

@@ -288,6 +288,9 @@ body:has(.offcanvas.show) .sidebar-toggle {
   border-radius: 50%;
   overflow: hidden;
   background-color: var(--primary-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
   flex-shrink: 0;
 }
 
@@ -877,4 +880,56 @@ body:has(.offcanvas.show) .sidebar-toggle {
     width: 28px;
     height: 28px;
   }
+}
+
+/* Create Post Modal Design */
+.create-post-btn {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  z-index: 1051;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  background: var(--primary-color);
+  border: none;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.create-post-btn:active,
+.create-post-btn:hover {
+  background-color: var(--primary-color) !important;
+  opacity: 0.7;
+}
+
+/* Hide create post button when its modal is open */
+body:has(.modal.show) .create-post-btn {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Make create post modal size larger */
+.modal-dialog-create-post {
+  max-width: 800px;
+  margin: auto;
+}
+
+.create-post-modal-body h3 {
+  font-weight: 600;
+  text-align: center;
+  color: var(--text-color);
+}
+
+.create-post-modal-body .btn-primary {
+  width: 100%;
+  border-radius: 8px;
+  padding: 0.6rem;
+  font-weight: 500;
+  background-color: var(--primary-color);
 }

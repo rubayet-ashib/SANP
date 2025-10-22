@@ -132,12 +132,12 @@ if ($_SESSION['role'] == "alumni") {
 
             <?php
             // Prepare and execute query
-            $sql = "select * from batches where batch_id = ?";
+            $sql = "SELECT b.batch_id AS batch_id, batch_name, logo, session FROM batches b JOIN users u ON b.batch_id = u.batch_id WHERE u.sid = ?";
             $stmt = $db->prepare($sql);
             if (!$stmt) {
                 die("Prepare failed: " . $db->error);
             }
-            $stmt->bind_param("i", $_SESSION['batch_id']);
+            $stmt->bind_param("s", $_SESSION['sid']);
             $stmt->execute();
             $rel = $stmt->get_result();
             $data = $rel->fetch_assoc();

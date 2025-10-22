@@ -58,8 +58,16 @@
                         <button type="submit" class="btn btn-primary" name="login-btn" id="toastTrigger">Log In</button>
                     </form>
                     <div class="links">
-                        <p><a href="student-news_feed.php" style="color: var(--primary-color);">Forgot
-                                password?</a>
+                        <p class="text-muted">Don’t have an account?
+                            <a href="create_account.php" style="color: var(--primary-color);">
+                                Create one
+                            </a>
+                        </p>
+
+                        <p>
+                            <a href="#" style="color: var(--primary-color);">
+                                Forgot password?
+                            </a>
                         </p>
                     </div>
                 </div>
@@ -73,9 +81,17 @@
         </div>
 
         <div class="toast-container position-fixed bottom-0 end-0 p-3">
-            <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div id="liveToast1" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="toast-body alert alert-danger mb-0">
                     Invalid Student ID or Password!
+                </div>
+            </div>
+        </div>
+
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div id="liveToast2" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-body alert alert-success mb-0">
+                    Account created successfully! Log in to continue.
                 </div>
             </div>
         </div>
@@ -87,14 +103,24 @@
 
     <!-- Toast Alert Script -->
     <script>
-        const toastLiveExample = document.getElementById('liveToast')
+        const toastLiveExample1 = document.getElementById('liveToast1')
         if (toastTrigger) {
-            const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
+            const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample1)
             <?php if (isset($_SESSION['invalid_status'])):
                 unset($_SESSION['invalid_status']);?>
                 toastBootstrap.show();
             <?php endif; ?>
         }
+    </script>
+
+    <!-- Account Creation Successful Toast Script -->
+    <script>
+        const toastLiveExample2 = document.getElementById('liveToast2')
+        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample2)
+        <?php if (isset($_SESSION['success_toast'])):
+            unset($_SESSION['success_toast']);?>
+            toastBootstrap.show();
+        <?php endif; ?>
     </script>
 
 </body>
