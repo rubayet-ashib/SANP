@@ -170,7 +170,7 @@ if (!isset($_SESSION['status'])) {
                                     alt="Profile Picture" />
                             </div>
                             <div>
-                                <h6 class="mb-0 fw-bold"><?php echo $user_data['name'] ?></h6>
+                                <h6 class="mb-0 fw-bold"><?php echo $user_name ?></h6>
                                 <small class="text-muted"><?php echo $post_date ?></small>
                             </div>
                         </div>
@@ -247,7 +247,7 @@ if (!isset($_SESSION['status'])) {
                         <div class="like-container flex-fill d-flex justify-content-center align-items-center <?php echo $isLiked ? 'liked' : '' ?>" data-post-id="<?php echo $post_id ?>">
                             <div class="like d-flex align-items-center gap-3">
                                 <img src="<?php echo $isLiked ? 'icons/like-hover.svg' : 'icons/like.svg' ?>" class="like-icon">
-                                <span class="count like-count" style="text-color: <?php echo $isLiked ? '#4c00ff' : '#343a40' ?>"><?php echo $total_count ?></span>
+                                <span class="count like-count" style="color: <?php echo $isLiked ? '#4c00ff' : '#343a40' ?>"><?php echo $total_count ?></span>
                             </div>
                         </div>
 
@@ -255,10 +255,37 @@ if (!isset($_SESSION['status'])) {
                         <div class="divider"></div>
 
                         <!-- Comment Section -->
-                        <div class="comment-container flex-fill d-flex justify-content-center align-items-center">
+                        <?php
+                        // Get total comment count
+                        $sql = "SELECT COUNT(sid) AS comment_count FROM comments WHERE post_id = ? GROUP BY post_id";
+                        $stmt4 = $db->prepare($sql);
+                        if (!$stmt4) {
+                            die("Prepare failed: " . $db->error);
+                        }
+                        $stmt4->bind_param("s", $post_id);
+                        $stmt4->execute();
+                        $rel4 = $stmt4->get_result();
+                        $data = $rel4->fetch_assoc();
+                        $total_comment_count = 0;
+                        if ($rel4->num_rows > 0) $total_comment_count = $data['comment_count'];
+
+                        // Get if commented or not
+                        $sql = "SELECT * FROM comments WHERE post_id = ? AND sid = ?";
+                        $stmt5 = $db->prepare($sql);
+                        if (!$stmt5) {
+                            die("Prepare failed: " . $db->error);
+                        }
+                        $stmt5->bind_param("ss", $post_id, $_SESSION['sid']);
+                        $stmt5->execute();
+                        $rel5 = $stmt5->get_result();
+                        $isCommented = 0;
+                        if ($rel5->num_rows > 0) $isCommented = 1;
+                        ?>
+
+                        <div class="comment-container flex-fill d-flex justify-content-center align-items-center <?php echo $isCommented ? 'commented' : '' ?>" data-post-id="<?php echo $post_id ?>">
                             <div class="comment d-flex align-items-center gap-3">
-                                <img src="icons/comment.svg" alt="">
-                                <span class="count comment-count">123</span>
+                                <img src="<?php echo $isCommented ? 'icons/comment-hover.svg' : 'icons/comment.svg' ?>" class="comment-icon">
+                                <span class="count comment-count" style="color: <?php echo $isCommented ? '#4c00ff' : '#343a40' ?>"><?php echo $total_comment_count ?></span>
                             </div>
                         </div>
                     </div>
@@ -394,13 +421,10 @@ if (!isset($_SESSION['status'])) {
                         countSpan.textContent = newCount;
                         // Toggle icon and count color
                         this.classList.toggle('liked');
-                        if(this.classList.contains('liked'))
-                        {
+                        if (this.classList.contains('liked')) {
                             icon.src = 'icons/like-hover.svg';
                             countSpan.style.color = "#4c00ff";
-                        }
-                        else 
-                        {
+                        } else {
                             icon.src = 'icons/like.svg';
                             countSpan.style.color = "#343a40";
                         }
@@ -409,6 +433,33 @@ if (!isset($_SESSION['status'])) {
             });
         });
     </script>
+
+    <!-- Send comment info to comment view page  -->
+    <script>
+        document.querySelectorAll(".comment-container").forEach(button => {
+            button.addEventListener("click", function() {
+                const postId = this.getAttribute("data-post-id");
+
+                // Create a form dynamically
+                const form = document.createElement("form");
+                form.method = "POST";
+                form.action = "comments.php";
+                form.target = "blank";
+
+                // Hidden input for the single data
+                const input = document.createElement("input");
+                input.type = "hidden";
+                input.name = "post_id";
+                input.value = postId;
+                form.appendChild(input);
+
+                // Add and submit
+                document.body.appendChild(form);
+                form.submit();
+            });
+        });
+    </script>
+
 
 </body>
 

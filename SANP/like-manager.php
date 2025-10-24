@@ -13,7 +13,13 @@ $source = $_POST['source'] ?? 'direct';
 
 if ($source != 'ajax') {
     // User tried to access the file directly via URL
-    die("Access denied!");
+    if ($_SESSION['role'] == "alumni") {
+        header("location: alumni-news_feed.php");
+        exit;
+    } else {
+        header("location: student-news_feed.php");
+        exit;
+    }
 }
 
 include('db_connect.php');
