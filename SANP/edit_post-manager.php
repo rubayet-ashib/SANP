@@ -5,7 +5,7 @@ if (!isset($_SESSION['status'])) {
     exit;
 }
 
-if (!isset($_POST['post-btn'])) {
+if (!isset($_POST['update-btn'])) {
     if ($_SESSION['role'] == "alumni") {
         header("location: alumni-news_feed.php");
         exit;
@@ -16,16 +16,12 @@ if (!isset($_POST['post-btn'])) {
 }
 
 // Collect data from $_POST
-$post_id = bin2hex(random_bytes(16));
-$sid = $_SESSION['sid'];
-$type = $_POST['type'];
+$post_id = $_POST['post_id'];
 $des = $_POST['des'];
 $imageFile = NULL;
 
 $redirectPage = $_POST['from'];
 
-$batch_id = NULL;
-if($type == "student-batch" || $type == "alumni-batch") $batch_id = $_POST['batch_id'];
 
 if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
     $imageDir = "uploads/";
@@ -58,17 +54,20 @@ include("db_connect.php");
 $db = connect();
 
 // Prepare and execute query
-$sql = "INSERT INTO posts (post_id, sid, type, batch_id, description, image) VALUES (?, ?, ?, ?, ?, ?)";
+$sql = "";
+if($imageFile != NULL) $sql = "UPDATE posts SET description = ?, image = ? WHERE post_id = ?";
+else $sql = "UPDATE posts SET description = ? WHERE post_id = ?";
 $stmt = $db->prepare($sql);
 if (!$stmt) {
     die("Prepare failed: " . $db->error);
 }
-$stmt->bind_param("ssssss", $post_id, $sid, $type, $batch_id, $des, $imageFile);
+if($imageFile != NULL) $stmt->bind_param("sss", $des, $imageFile, $post_id);
+else $stmt->bind_param("ss", $des, $post_id);
 $stmt->execute();
 
 // Redirect
 echo "<script>
-    alert('Post created successfully!');
+    alert('Post updated successfully!');
     window.location.href = '$redirectPage';
 </script>";
 exit;

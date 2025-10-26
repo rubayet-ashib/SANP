@@ -176,12 +176,12 @@ if (!isset($_SESSION['status'])) {
                         </div>
 
                         <!-- More option trigger button -->
-                        <div type="div" class="more-option" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        <div type="div" class="more-option" data-bs-toggle="modal" data-bs-target="#optionModal-<?php echo $post_id; ?>">
                             <img src="icons/more-option.svg" alt="">
                         </div>
 
                         <!-- More option menu -->
-                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                        <div class="modal fade" id="optionModal-<?php echo $post_id; ?>" tabindex="-1" aria-labelledby="optionModalLabel"
                             aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
@@ -192,9 +192,99 @@ if (!isset($_SESSION['status'])) {
                                     </div>
                                     <!-- Modal body -->
                                     <div class="option-body d-flex flex-column justify-content-center align-items-center">
-                                        <span class="w-100 ">Edit</span>
-                                        <span class="w-100 ">Delete</span>
-                                        <span class="w-100 ">Report</span>
+                                        <?php if ($user == $_SESSION['sid']) { ?>
+                                            <span class="w-100" data-bs-toggle="modal" data-bs-target="#editModal-<?php echo $post_id; ?>">Edit</span>
+                                        <?php } ?>
+                                        <?php if ($user == $_SESSION['sid'] || $_SESSION['role'] == "admin") { ?>
+                                            <span class="delete-post w-100 " data-post-id="<?php echo $post_id ?>">Delete</span>
+                                        <?php } ?>
+                                        <?php if ($user != $_SESSION['sid']) { ?>
+                                            <span class="w-100 " data-bs-toggle="modal" data-bs-target="#reportModal-<?php echo $post_id; ?>">Report</span>
+                                        <?php } ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Edit Post Modal  -->
+                        <div class="modal fade p-3" id="editModal-<?php echo $post_id; ?>" tabindex="-1" aria-labelledby="editModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-create-post modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <div class="more-option-btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                            <img src="icons/close-btn.svg" alt="">
+                                        </div>
+                                    </div>
+
+                                    <!-- Modal body -->
+                                    <div class=" create-post-modal-body d-flex flex-column justify-content-center align-items-center w-100 p-3">
+                                        <h3 class="mb-3">Edit Post</h3>
+                                        <form action="edit_post-manager.php" method="POST" enctype="multipart/form-data" class="w-100">
+
+                                            <!-- Description -->
+                                            <div class="mb-3 d-flex flex-column align-items-start">
+                                                <label for="postDescription" class="form-label ms-2">Description</label>
+                                                <textarea class="form-control" id="postDescription" rows="5" placeholder="Write something..."
+                                                    required name="des"><?php echo $post_des ?></textarea>
+                                            </div>
+
+                                            <!-- Default Parameters  -->
+                                            <input type="hidden" value="<?php echo $post_id ?>" name="post_id">
+
+                                            <input type="hidden" value="student-news_feed.php" name="from">
+
+                                            <!-- Image Upload -->
+                                            <div class="mb-3 d-flex flex-column align-items-start">
+                                                <label for="postImage" class="form-label ms-2">Upload
+                                                    Image</label>
+                                                <input type="file" class="form-control" id="postImage" accept="image/*" name="image">
+                                                <small class="text-muted ms-1 mt-1">Max size: 2MB</small>
+                                            </div>
+
+                                            <!-- Update Button -->
+                                            <div class="d-flex justify-content-end mb-2">
+                                                <button type="submit" class="btn btn-primary" name="update-btn">Update</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Report Post Modal  -->
+                        <div class="modal fade p-3" id="reportModal-<?php echo $post_id; ?>" tabindex="-1" aria-labelledby="reportModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-create-post modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <div class="more-option-btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                            <img src="icons/close-btn.svg" alt="">
+                                        </div>
+                                    </div>
+
+                                    <!-- Modal body -->
+                                    <div class=" create-post-modal-body d-flex flex-column justify-content-center align-items-center w-100 p-3">
+                                        <h3 class="mb-3">Report Post</h3>
+                                        <form action="report_post-manager.php" method="POST" class="w-100">
+
+                                            <!-- Description -->
+                                            <div class="mb-3 d-flex flex-column align-items-start">
+                                                <label for="postDescription" class="form-label ms-2">Description</label>
+                                                <textarea class="form-control" id="postDescription" rows="7" placeholder="Type your report..."
+                                                    required name="des"></textarea>
+                                            </div>
+
+                                            <!-- Default Parameters  -->
+                                            <input type="hidden" value="<?php echo $post_id ?>" name="post_id">
+
+                                            <input type="hidden" value="student-news_feed.php" name="from">
+
+                                            <!-- Report Button -->
+                                            <div class="d-flex justify-content-end mb-2">
+                                                <button type="submit" class="btn btn-primary" name="report-btn">Report</button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -327,6 +417,8 @@ if (!isset($_SESSION['status'])) {
                             <!-- Default Parameters  -->
                             <input type="hidden" value="student-general" name="type">
 
+                            <input type="hidden" value="student-news_feed.php" name="from">
+
                             <!-- Image Upload -->
                             <div class="mb-3 d-flex flex-column align-items-start">
                                 <label for="postImage" class="form-label ms-2">Upload
@@ -437,8 +529,10 @@ if (!isset($_SESSION['status'])) {
     <!-- Send comment info to comment view page  -->
     <script>
         document.querySelectorAll(".comment-container").forEach(button => {
-            button.addEventListener("click", function() {
+            button.addEventListener("click", function()
+            {
                 const postId = this.getAttribute("data-post-id");
+                const fromPage = window.location.href;
 
                 // Create a form dynamically
                 const form = document.createElement("form");
@@ -446,12 +540,19 @@ if (!isset($_SESSION['status'])) {
                 form.action = "comments.php";
                 form.target = "blank";
 
-                // Hidden input for the single data
-                const input = document.createElement("input");
-                input.type = "hidden";
-                input.name = "post_id";
-                input.value = postId;
-                form.appendChild(input);
+                // Hidden input 1: post_id
+                const input1 = document.createElement("input");
+                input1.type = "hidden";
+                input1.name = "post_id";
+                input1.value = postId;
+                form.appendChild(input1);
+
+                // Hidden input 2: from_page
+                const input2 = document.createElement("input");
+                input2.type = "hidden";
+                input2.name = "from";
+                input2.value = fromPage;
+                form.appendChild(input2);
 
                 // Add and submit
                 document.body.appendChild(form);
@@ -460,6 +561,39 @@ if (!isset($_SESSION['status'])) {
         });
     </script>
 
+    <!-- Send post info to delete_post page  -->
+    <script>
+        document.querySelectorAll(".delete-post").forEach(button => {
+            button.addEventListener("click", function()
+            {
+                const postId = this.getAttribute("data-post-id");
+                const fromPage = window.location.href;
+
+                // Create a form dynamically
+                const form = document.createElement("form");
+                form.method = "POST";
+                form.action = "delete_post-manager.php";
+
+                // Hidden input 1: post_id
+                const input1 = document.createElement("input");
+                input1.type = "hidden";
+                input1.name = "post_id";
+                input1.value = postId;
+                form.appendChild(input1);
+
+                // Hidden input 2: from_page
+                const input2 = document.createElement("input");
+                input2.type = "hidden";
+                input2.name = "from";
+                input2.value = fromPage;
+                form.appendChild(input2);
+
+                // Add and submit
+                document.body.appendChild(form);
+                form.submit();
+            });
+        });
+    </script>
 
 </body>
 
