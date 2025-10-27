@@ -6,13 +6,13 @@
 }
 
 @font-face {
-  font-family: 'Inter';
-  src: url('../fonts/Inter.woff2') format('woff2');
+  font-family: "Inter";
+  src: url("../fonts/Inter.woff2") format("woff2");
 }
 
 body {
   background-color: var(--bg-color);
-  font-family: 'Inter', Arial, sans-serif;
+  font-family: "Inter", Arial, sans-serif;
 }
 
 /* Login Page */
@@ -199,7 +199,7 @@ body {
   bottom: 40px;
   left: 40px;
   z-index: 1051;
-  border-radius: 50%;
+  border-radius: 12px;
   width: 50px;
   height: 50px;
   display: flex;
@@ -510,7 +510,7 @@ body:has(.offcanvas.show) .sidebar-toggle {
 .more-option-btn-close img {
   height: 32px;
   width: 32px;
-  padding: 4px
+  padding: 4px;
 }
 
 .more-option-btn-close:hover {
@@ -944,8 +944,7 @@ body:has(.modal.show) .create-post-btn {
   overflow: hidden;
 }
 
-.comment-post-container
-{
+.comment-post-container {
   overflow-y: auto;
 }
 
@@ -953,8 +952,7 @@ body:has(.modal.show) .create-post-btn {
   width: 0px;
 }
 
-.comments-container
-{
+.comments-container {
   overflow-y: auto;
 }
 
@@ -978,8 +976,7 @@ body:has(.modal.show) .create-post-btn {
   width: 0px;
 }
 
-.comment-btn
-{
+.comment-btn {
   border-radius: 50%;
   width: 50px;
   height: 50px;
@@ -998,4 +995,60 @@ body:has(.modal.show) .create-post-btn {
 .comment-btn:hover {
   background-color: var(--primary-color) !important;
   opacity: 0.7;
+}
+
+/* Event card date design */
+.dates {
+  display: flex;
+  gap: 12px;
+  font-size: 0.95rem;
+  color: #444;
+}
+
+.date-box {
+  flex: 1;
+  background-color: #f6f1ff;
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.date-label {
+  font-size: 0.75rem;
+  color: #666;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.date-value {
+  font-weight: 500;
+  color: var(--primary-color) !important;
+}
+
+/* Responsive on small screen */
+@media (max-width: 480px) {
+  .dates {
+    flex-direction: column;
+  }
+
+  .date-box {
+    width: 100%;
+  }
+}
+
+#start-date,
+#end-date {
+  padding: 10px;
+  border-radius: 5px;
+  font-family: "Inter";
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  color: var(--primary-color);
+  background-color: #f6f1ff;
+  text-transform: uppercase;
 }

@@ -39,7 +39,7 @@ if ($_SESSION['role'] == "alumni") {
                 <nav class="navbar navbar-expand-xl fixed-top">
                     <div class="container-fluid">
                         <!-- Logo -->
-                        <a class="navbar-brand d-flex align-items-center" href="#">
+                        <a class="navbar-brand d-flex align-items-center" href="<?php echo ($_SESSION['role'] == "alumni") ? "alumni-news_feed.php" : "student-news_feed.php" ?>">
                             <img src="resources/Logo.svg" alt="Logo" style="height: 80px;">
                             <div class="d-flex flex-column">
                                 <span style="text-align: center;">Student & Alumni</span>
@@ -292,7 +292,7 @@ if ($_SESSION['role'] == "alumni") {
                                     <!-- Modal body -->
                                     <div class=" create-post-modal-body d-flex flex-column justify-content-center align-items-center w-100 p-3">
                                         <h3 class="mb-3">Report Post</h3>
-                                        <form action="report_post-manager.php" method="POST" class="w-100">
+                                        <form action="report-manager.php" method="POST" class="w-100">
 
                                             <!-- Description -->
                                             <div class="mb-3 d-flex flex-column align-items-start">
@@ -302,7 +302,9 @@ if ($_SESSION['role'] == "alumni") {
                                             </div>
 
                                             <!-- Default Parameters  -->
-                                            <input type="hidden" value="<?php echo $post_id ?>" name="post_id">
+                                            <input type="hidden" value="<?php echo $post_id ?>" name="target_id">
+
+                                            <input type="hidden" value="post" name="type">
 
                                             <input type="hidden" value="student-batch.php" name="from">
 

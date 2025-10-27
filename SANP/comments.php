@@ -42,7 +42,7 @@ if (!isset($_POST['post_id'])) {
                 <nav class="navbar navbar-expand-xl fixed-top">
                     <div class="container-fluid">
                         <!-- Logo -->
-                        <a class="navbar-brand d-flex align-items-center" href="#">
+                        <a class="navbar-brand d-flex align-items-center" href="<?php echo ($_SESSION['role'] == "alumni") ? "alumni-news_feed.php" : "student-news_feed.php" ?>">
                             <img src="resources/Logo.svg" alt="Logo" style="height: 80px;">
                             <div class="d-flex flex-column">
                                 <span style="text-align: center;">Student & Alumni</span>

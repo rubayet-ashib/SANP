@@ -33,7 +33,7 @@ if (!isset($_SESSION['status'])) {
                 <nav class="navbar navbar-expand-xl fixed-top">
                     <div class="container-fluid">
                         <!-- Logo -->
-                        <a class="navbar-brand d-flex align-items-center" href="#">
+                        <a class="navbar-brand d-flex align-items-center" href="<?php echo ($_SESSION['role'] == "alumni") ? "alumni-news_feed.php" : "student-news_feed.php" ?>">
                             <img src="resources/Logo.svg" alt="Logo" style="height: 80px;">
                             <div class="d-flex flex-column">
                                 <span style="text-align: center;">Student & Alumni</span>
@@ -125,75 +125,266 @@ if (!isset($_SESSION['status'])) {
 
         <!-- Post Container -->
         <div class="post-container">
+            <?php
+            // Prepare and execute query for event info
+            $sql = "SELECT * FROM events WHERE type = 'alumni' AND approve_status = 1 ORDER BY timestamp DESC";
+            $stmt = $db->prepare($sql);
+            if (!$stmt) {
+                die("Prepare failed: " . $db->error);
+            }
+            $stmt->execute();
+            $rel = $stmt->get_result();
 
-            <div class="post-card">
-                <!-- Header -->
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="d-flex align-items-center">
-                        <div>
-                            <h6 class="mb-3 fw-bold" style="font-size: 2rem;">CSE Fest
-                                2024</h6>
-                            <p class="mb-0" style="font-size: 1rem; color: #6c757d;">Start date: October 12, 2025
-                            </p>
-                            <p class="mb-0" style="font-size: 1rem; color: #6c757d;">End date: October 15, 2025
-                            </p>
-                        </div>
-                    </div>
+            // Access database
+            while ($row = $rel->fetch_assoc()) {
+                // Get event info
+                $event_id = $row['event_id'];
+                $title = $row['title'];
+                $start_date = date("M j, Y", strtotime($row['start_date']));
+                $end_date = date("M j, Y", strtotime($row['end_date']));
+                $event_des = $row['description'];
+                $event_image = $row['image'];
+                $posted_by = $row['posted_by'];
+            ?>
+                <div class="post-card">
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="d-flex align-items-center row w-100">
+                            <div>
+                                <h6 class="mb-3 fw-bold" style="font-size: 2rem;"><?php echo $title ?></h6>
 
-                    <!-- More option trigger button -->
-                    <div type="div" class="more-option" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                        <img src="icons/more-option.svg" alt="">
-                    </div>
-
-                    <!-- More option menu -->
-                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <div class="more-option-btn-close" data-bs-dismiss="modal" aria-label="Close">
-                                        <img src="icons/close-btn.svg" alt="">
+                                <div class="dates">
+                                    <div class="date-box">
+                                        <span class="date-label">Start</span>
+                                        <span class="date-value"><?php echo $start_date ?></span>
                                     </div>
-                                </div>
-                                <!-- Modal body -->
-                                <div class="option-body d-flex flex-column justify-content-center align-items-center">
-                                    <span class="w-100 ">Edit</span>
-                                    <span class="w-100 ">Delete</span>
-                                    <span class="w-100 ">Report</span>
+                                    <div class="date-box">
+                                        <span class="date-label">End</span>
+                                        <span class="date-value"><?php echo $end_date ?></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- More option trigger button -->
+                        <div type="div" class="more-option" data-bs-toggle="modal" data-bs-target="#optionModal-<?php echo $event_id; ?>">
+                            <img src="icons/more-option.svg" alt="">
+                        </div>
+
+                        <!-- More option menu -->
+                        <div class="modal fade" id="optionModal-<?php echo $event_id; ?>" tabindex="-1" aria-labelledby="optionModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <div class="more-option-btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                            <img src="icons/close-btn.svg" alt="">
+                                        </div>
+                                    </div>
+                                    <!-- Modal body -->
+                                    <div class="option-body d-flex flex-column justify-content-center align-items-center">
+                                        <?php if ($posted_by == $_SESSION['sid']) { ?>
+                                            <span class="w-100" data-bs-toggle="modal" data-bs-target="#editModal-<?php echo $event_id; ?>">Edit</span>
+                                        <?php } ?>
+                                        <?php if ($posted_by == $_SESSION['sid'] || $_SESSION['role'] == "admin") { ?>
+                                            <span class="delete-event w-100 " data-post-id="<?php echo $event_id ?>">Delete</span>
+                                        <?php } ?>
+                                        <?php if ($posted_by != $_SESSION['sid']) { ?>
+                                            <span class="w-100 " data-bs-toggle="modal" data-bs-target="#reportModal-<?php echo $event_id; ?>">Report</span>
+                                        <?php } ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Edit Event Modal  -->
+                        <div class="modal fade p-3" id="editModal-<?php echo $event_id; ?>" tabindex="-1" aria-labelledby="editModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-create-post modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <div class="more-option-btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                            <img src="icons/close-btn.svg" alt="">
+                                        </div>
+                                    </div>
+
+                                    <!-- Modal body -->
+                                    <div class=" create-post-modal-body d-flex flex-column justify-content-center align-items-center w-100 p-3">
+                                        <h3 class="mb-3">Update Event</h3>
+                                        <form action="edit_event-manager.php" method="POST" enctype="multipart/form-data" class="w-100">
+
+                                            <!-- Title -->
+                                            <div class="mb-4 d-flex flex-column align-items-start">
+                                                <label for="eventTitle" class="form-label ms-2">Title</label>
+                                                <input type="text" class="form-control" id="eventTitle" placeholder="Enter event title" required name="title" value="<?php echo $title ?>">
+                                            </div>
+
+                                            <!-- Start & end date  -->
+                                            <div class="d-flex justify-content-between mb-3 ms-2 me-2">
+                                                <div>
+                                                    <label for="start-date" class="form-label">Start date: </label>
+                                                    <input type="date" id="start-date" required name="start-date" value="<?php echo $row['start_date'] ?>">
+                                                </div>
+                                                <div>
+                                                    <label for="end-date" class="form-label">End date: </label>
+                                                    <input type="date" id="end-date" required name="end-date" value="<?php echo $row['end_date'] ?>">
+                                                </div>
+                                            </div>
+
+                                            <!-- Description -->
+                                            <div class="mb-3 d-flex flex-column align-items-start">
+                                                <label for="eventDescription" class="form-label ms-2">Description</label>
+                                                <textarea class="form-control" id="eventDescription" rows="5" placeholder="Write something..."
+                                                    required name="des"><?php echo $event_des ?></textarea>
+                                            </div>
+
+                                            <!-- Default Parameters  -->
+                                            <input type="hidden" value="<?php echo $event_id ?>" name="event_id">
+
+                                            <input type="hidden" value="alumni-events.php" name="from">
+
+                                            <!-- Image Upload -->
+                                            <div class="mb-3 d-flex flex-column align-items-start">
+                                                <label for="eventImage" class="form-label ms-2">Upload
+                                                    Image</label>
+                                                <input type="file" class="form-control" id="eventImage" accept="image/*" name="image">
+                                                <small class="text-muted ms-1 mt-1">Max size: 2MB</small>
+                                            </div>
+
+                                            <!-- Update Button -->
+                                            <div class="d-flex justify-content-end mb-2">
+                                                <button type="submit" class="btn btn-primary" name="update-btn">Update</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Report Post Modal  -->
+                        <div class="modal fade p-3" id="reportModal-<?php echo $event_id; ?>" tabindex="-1" aria-labelledby="reportModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-create-post modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <div class="more-option-btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                            <img src="icons/close-btn.svg" alt="">
+                                        </div>
+                                    </div>
+
+                                    <!-- Modal body -->
+                                    <div class=" create-post-modal-body d-flex flex-column justify-content-center align-items-center w-100 p-3">
+                                        <h3 class="mb-3">Report Event</h3>
+                                        <form action="report-manager.php" method="POST" class="w-100">
+
+                                            <!-- Description -->
+                                            <div class="mb-3 d-flex flex-column align-items-start">
+                                                <label for="eventDescription" class="form-label ms-2">Description</label>
+                                                <textarea class="form-control" id="eventDescription" rows="7" placeholder="Type your report..."
+                                                    required name="des"></textarea>
+                                            </div>
+
+                                            <!-- Default Parameters  -->
+                                            <input type="hidden" value="<?php echo $event_id ?>" name="target_id">
+
+                                            <input type="hidden" value="event" name="type">
+
+                                            <input type="hidden" value="alumni-events.php" name="from">
+
+                                            <!-- Report Button -->
+                                            <div class="d-flex justify-content-end mb-2">
+                                                <button type="submit" class="btn btn-primary" name="report-btn">Report</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Description -->
+                    <div class="text-wrapper">
+                        <p class="description mb-2"><?php echo $event_des ?> </p>
+                    </div>
+
+                    <!-- Post Image -->
+                    <div class="post-image mt-2" style="margin-bottom: -0.5rem;">
+                        <img src="<?php echo $event_image ?>"
+                            alt="" />
                     </div>
                 </div>
+            <?php } ?>
+        </div>
 
-                <!-- Description -->
-                <div class="text-wrapper">
-                    <p class="description mb-2">
-                        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Rerum aperiam aut inventore
-                        esse
-                        enim
-                        officia molestiae incidunt, totam vero qui labore dolore iure, voluptatem beatae eaque
-                        nostrum
-                        est.
-                        Molestias odio praesentium nam recusandae atque inventore ad magnam iure quidem numquam
-                        quibusdam
-                        dolores illo odit error ullam totam fugiat quia deserunt voluptas natus mollitia
-                        reprehenderit,
-                        exercitationem sint optio. Sequi officiis dignissimos repellat perferendis eos odit
-                        optio culpa
-                        quod
-                        consequuntur ullam incidunt accusamus, quaerat excepturi cupiditate aut necessitatibus
-                        sit earum
-                        facilis
-                        inventore nihil in error fugit dolore? Laborum, esse delectus facilis eius laudantium
-                        autem rem quia consectetur distinctio perferendis?
-                    </p>
-                </div>
+        <!-- Create Event Section -->
+        <!-- Create Event Button div (visible to students and admins)-->
+        <?php if ($_SESSION['role'] == "alumni") { ?>
+            <div class="create-post-btn btn" type="div" data-bs-toggle="modal" data-bs-target="#createEventModal">
+                <img src="icons/add.svg" alt="Create Event Button" style="height: 36px; width: 36px;">
+            </div>
+        <?php } ?>
 
-                <!-- Post Image -->
-                <div class="post-image mt-2" style="margin-bottom: -0.5rem;">
-                    <img src="https://images.unsplash.com/photo-1421789665209-c9b2a435e3dc?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                        alt="" />
+        <!-- Create Event Modal -->
+        <div class="modal fade p-3" id="createEventModal" tabindex="-1" aria-labelledby="createEventModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-create-post modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="more-option-btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            <img src="icons/close-btn.svg" alt="">
+                        </div>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class=" create-post-modal-body d-flex flex-column justify-content-center align-items-center w-100 p-3">
+                        <h3 class="mb-3">Create a New Event</h3>
+                        <form action="create_event-manager.php" method="POST" enctype="multipart/form-data" class="w-100">
+
+                            <!-- Title -->
+                            <div class="mb-4 d-flex flex-column align-items-start">
+                                <label for="eventTitle" class="form-label ms-2">Title</label>
+                                <input type="text" class="form-control" id="eventTitle" placeholder="Enter event title" required name="title">
+                            </div>
+
+                            <!-- Start & end date  -->
+                            <div class="d-flex justify-content-between mb-3 ms-2 me-2">
+                                <div>
+                                    <label for="start-date" class="form-label">Start date: </label>
+                                    <input type="date" id="start-date" required name="start-date">
+                                </div>
+                                <div>
+                                    <label for="end-date" class="form-label">End date: </label>
+                                    <input type="date" id="end-date" required name="end-date">
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="mb-3 d-flex flex-column align-items-start">
+                                <label for="eventDescription" class="form-label ms-2">Description</label>
+                                <textarea class="form-control" id="eventDescription" rows="5" placeholder="Write something..."
+                                    required name="des"></textarea>
+                            </div>
+
+                            <!-- Default Parameters  -->
+                            <input type="hidden" value="alumni" name="type">
+
+                            <input type="hidden" value="alumni-events.php" name="from">
+
+                            <!-- Image Upload -->
+                            <div class="mb-3 d-flex flex-column align-items-start">
+                                <label for="eventImage" class="form-label ms-2">Upload
+                                    Image</label>
+                                <input type="file" class="form-control" id="eventImage" accept="image/*" name="image">
+                                <small class="text-muted ms-1 mt-1">Max size: 2MB</small>
+                            </div>
+
+                            <!-- Create Button -->
+                            <div class="d-flex justify-content-end mb-2">
+                                <button type="submit" class="btn btn-primary" name="create-btn">Create</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -249,6 +440,54 @@ if (!isset($_SESSION['status'])) {
             }
         });
     </script>
+
+    <!-- Prevent selecting an end date earlier than start -->
+    <script>
+        const start = document.getElementById('start-date');
+        const end = document.getElementById('end-date');
+
+        start.addEventListener('change', () => {
+            end.min = start.value;
+        });
+
+        end.addEventListener('change', () => {
+            start.max = end.value;
+        });
+    </script>
+
+    <!-- Send event info to delete_event page  -->
+    <script>
+        document.querySelectorAll(".delete-event").forEach(button => {
+            button.addEventListener("click", function() {
+                const eventId = this.getAttribute("data-post-id");
+                const fromPage = window.location.href;
+
+                // Create a form dynamically
+                const form = document.createElement("form");
+                form.method = "POST";
+                form.action = "delete_event-manager.php";
+
+                // Hidden input 1: event_id
+                const input1 = document.createElement("input");
+                input1.type = "hidden";
+                input1.name = "event_id";
+                input1.value = eventId;
+                form.appendChild(input1);
+
+                // Hidden input 2: from_page
+                const input2 = document.createElement("input");
+                input2.type = "hidden";
+                input2.name = "from";
+                input2.value = fromPage;
+                form.appendChild(input2);
+
+                // Add and submit
+                document.body.appendChild(form);
+                form.submit();
+            });
+        });
+    </script>
+
 </body>
 
 </html>
