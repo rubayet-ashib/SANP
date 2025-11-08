@@ -251,7 +251,7 @@ if (!isset($_SESSION['status'])) {
                                             <!-- Image Upload -->
                                             <div class="mb-3 d-flex flex-column align-items-start">
                                                 <label for="eventImage" class="form-label ms-2">Upload
-                                                    Image</label>
+                                                    Image (Optional)</label>
                                                 <input type="file" class="form-control" id="eventImage" accept="image/*" name="image">
                                                 <small class="text-muted ms-1 mt-1">Max size: 2MB</small>
                                             </div>
@@ -379,7 +379,7 @@ if (!isset($_SESSION['status'])) {
                             <!-- Image Upload -->
                             <div class="mb-3 d-flex flex-column align-items-start">
                                 <label for="eventImage" class="form-label ms-2">Upload
-                                    Image</label>
+                                    Image (Optional)</label>
                                 <input type="file" class="form-control" id="eventImage" accept="image/*" name="image">
                                 <small class="text-muted ms-1 mt-1">Max size: 2MB</small>
                             </div>

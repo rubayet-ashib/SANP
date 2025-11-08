@@ -134,48 +134,33 @@ if (!isset($_SESSION['status'])) {
 
             <!-- Scrollable notice list -->
             <div class="notice-list">
-                <div class="notice-card">
-                    <div class="notice-text">
-                        <p class="notice-title mb-0">Semester Final Exam Routine</p>
-                        <p class="notice-date mb-0">Published on: October 12, 2025</p>
-                    </div>
-                    <button class="download-btn">Download</button>
-                </div>
+                <?php
+                $sql = "SELECT * FROM notices ORDER BY timestamp DESC";
+                $stmt = $db->prepare($sql);
+                if (!$stmt) {
+                    die("Prepare failed: " . $db->error);
+                }
+                $stmt->execute();
+                $rel = $stmt->get_result();
+                while ($row = $rel->fetch_assoc()) {
+                    $title = $row['title'];
+                    $publish_date = date("M j, Y", strtotime($row['timestamp']));
+                    $filepath = $row['filepath'];
+                ?>
+                    <div class="notice-card">
+                        <div class="notice-text">
+                            <p class="notice-title mb-0"><?= $title ?></p>
+                            <p class="notice-date mb-0">Published on: <?= $publish_date ?></p>
+                        </div>
 
-                <div class="notice-card">
-                    <div class="notice-text">
-                        <p class="notice-title mb-0">Class Suspension Notice</p>
-                        <p class="notice-date mb-0">Published on: October 10, 2025</p>
+                        <form action="download.php" method="get">
+                            <input type="hidden" name="filepath" value="<?= $filepath ?>">
+                            <button type="submit" class="download-btn">Download</button>
+                        </form>
                     </div>
-                    <button class="download-btn">Download</button>
-                </div>
-
-                <div class="notice-card">
-                    <div class="notice-text">
-                        <p class="notice-title mb-0">Workshop on Research Methods</p>
-                        <p class="notice-date mb-0">Published on: October 7, 2025</p>
-                    </div>
-                    <button class="download-btn">Download</button>
-                </div>
-
-                <div class="notice-card">
-                    <div class="notice-text">
-                        <p class="notice-title mb-0">Midterm Result Publication</p>
-                        <p class="notice-date mb-0">Published on: October 3, 2025</p>
-                    </div>
-                    <button class="download-btn">Download</button>
-                </div>
-
-                <div class="notice-card">
-                    <div class="notice-text">
-                        <p class="notice-title mb-0">New Library Schedule</p>
-                        <p class="notice-date mb-0">Published on: September 29, 2025</p>
-                    </div>
-                    <button class="download-btn">Download</button>
-                </div>
+                <?php } ?>
             </div>
         </div>
-
     </div>
 
     <script src="bootstrap/js/bootstrap.min.js"></script>

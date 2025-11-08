@@ -92,7 +92,7 @@ if ($_SESSION['role'] != "admin") {
                         <li>
                             <hr>
                         </li>
-                        <li><a href="admin_panel-publish_notice.php">Publish Notice</a></li>
+                        <li><a href="admin_panel-manage_notice.php">Manage Notice</a></li>
                         <li>
                             <hr>
                         </li>
@@ -118,7 +118,7 @@ if ($_SESSION['role'] != "admin") {
                 <ul>
                     <li><a href="admin_panel-events_approval.php" class="active">Events Approval</a></li>
                     <li><a href="admin_panel-jobs_approval.php">Jobs Approval</a></li>
-                    <li><a href="admin_panel-publish_notice.php">Publish Notice</a></li>
+                    <li><a href="admin_panel-manage_notice.php">Manage Notice</a></li>
                     <li><a href="admin_panel-manage_student.php">Manage Student</a></li>
                 </ul>
             </div>
@@ -126,80 +126,111 @@ if ($_SESSION['role'] != "admin") {
 
         <!-- Post Container -->
         <div class="post-container">
+            <?php
+            // Prepare and execute query for event info
+            $sql = "SELECT * FROM events WHERE approve_status = 0 ORDER BY timestamp";
+            $stmt = $db->prepare($sql);
+            if (!$stmt) {
+                die("Prepare failed: " . $db->error);
+            }
+            $stmt->execute();
+            $rel = $stmt->get_result();
 
-            <div class="post-card">
-                <!-- Header -->
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="d-flex align-items-center">
-                        <div>
-                            <h6 class="mb-3 fw-bold" style="font-size: 2rem;">CSE Fest
-                                2024</h6>
-                            <p class="mb-0" style="font-size: 1rem; color: #6c757d;">Start date: October 12, 2025
-                            </p>
-                            <p class="mb-0" style="font-size: 1rem; color: #6c757d;">End date: October 15, 2025
-                            </p>
+            // Access database
+            while ($row = $rel->fetch_assoc()) {
+                // Get event info
+                $event_id = $row['event_id'];
+                $title = $row['title'];
+                $start_date = date("M j, Y", strtotime($row['start_date']));
+                $end_date = date("M j, Y", strtotime($row['end_date']));
+                $event_des = $row['description'];
+                $event_image = $row['image'];
+                $approved_by = $row['approved_by'];
+                $posted_by = $row['posted_by'];
+            ?>
+                <div class="post-card">
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="d-flex align-items-center row w-100">
+                            <div>
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <!-- Title -->
+                                    <div>
+                                        <h6 class="fw-bold" style="font-size: 2rem;"><?= $title ?></h6>
+                                    </div>
+
+                                    <!-- Verify Content -->
+                                    <div class="d-flex flex-column align-items-end">
+                                        <button class="download-btn">Verify</button>
+                                    </div>
+                                </div>
+
+                                <div class="dates">
+                                    <div class="date-box">
+                                        <span class="date-label">Start</span>
+                                        <span class="date-value"><?php echo $start_date ?></span>
+                                    </div>
+                                    <div class="date-box">
+                                        <span class="date-label">End</span>
+                                        <span class="date-value"><?php echo $end_date ?></span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Contact user -->
-                    <div class="d-flex flex-column align-items-end">
-                        <button class="download-btn">Contact</button>
-                    </div>
-                </div>
-
-                <!-- Description -->
-                <div class="text-wrapper">
-                    <p class="description mb-2">
-                        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Rerum aperiam aut inventore
-                        esse
-                        enim
-                        officia molestiae incidunt, totam vero qui labore dolore iure, voluptatem beatae eaque
-                        nostrum
-                        est.
-                        Molestias odio praesentium nam recusandae atque inventore ad magnam iure quidem numquam
-                        quibusdam
-                        dolores illo odit error ullam totam fugiat quia deserunt voluptas natus mollitia
-                        reprehenderit,
-                        exercitationem sint optio. Sequi officiis dignissimos repellat perferendis eos odit
-                        optio culpa
-                        quod
-                        consequuntur ullam incidunt accusamus, quaerat excepturi cupiditate aut necessitatibus
-                        sit earum
-                        facilis
-                        inventore nihil in error fugit dolore? Laborum, esse delectus facilis eius laudantium
-                        autem rem quia consectetur distinctio perferendis?
-                    </p>
-                </div>
-
-                <!-- Post Image -->
-                <div class="post-image mt-2">
-                    <img src="https://images.unsplash.com/photo-1421789665209-c9b2a435e3dc?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                        alt="" />
-                </div>
-
-                <!-- Post Footer -->
-                <div class="post-footer d-flex align-items-center">
-                    <!-- Approve Section -->
-                    <div class="approve-container flex-fill d-flex justify-content-center align-items-center">
-                        <div class="like d-flex align-items-center gap-3">
-                            <img src="icons/approve.svg" alt="">
-                            <span class="count">Approve</span>
-                        </div>
+                    <!-- Description -->
+                    <div class="text-wrapper">
+                        <p class="description mb-2"><?php echo $event_des ?> </p>
                     </div>
 
-                    <!-- Divider -->
-                    <div class="divider"></div>
+                    <!-- Post Image -->
+                    <div class="post-image mt-2" style="margin-bottom: -0.5rem;">
+                        <img src="<?php echo $event_image ?>"
+                            alt="" />
+                    </div>
 
-                    <!-- Reject Section -->
-                    <div class="reject-container flex-fill d-flex justify-content-center align-items-center">
-                        <div class="comment d-flex align-items-center gap-3">
-                            <img src="icons/reject.svg" alt="">
-                            <span class="count">Reject</span>
-                        </div>
+                    <!-- Post Footer -->
+                    <div class="post-footer d-flex align-items-center">
+                        <!-- Approve Section -->
+                        <form action="content_approval.php" method="POST" class="approve-container flex-fill d-flex justify-content-center align-items-center">
+
+                            <!-- Default parameters -->
+                            <input type="hidden" value="<?= $event_id ?>" name="target_id">
+                            <input type="hidden" value="event" name="target_type">
+                            <input type="hidden" value="admin_panel-events_approval.php" name="from">
+                            <input type="hidden" value="1" name="status">
+
+                            <button type="submit" class="flex-fill d-flex justify-content-center align-items-center" style="all: unset;">
+                                <div class="like d-flex align-items-center gap-3">
+                                    <img src="icons/approve.svg" alt="">
+                                    <span class="count">Approve</span>
+                                </div>
+                            </button>
+                        </form>
+
+                        <!-- Divider -->
+                        <div class="divider"></div>
+
+                        <!-- Reject Section -->
+                        <form action="content_approval.php" method="POST" class="reject-container flex-fill d-flex justify-content-center align-items-center">
+
+                            <!-- Default parameters -->
+                            <input type="hidden" value="<?= $event_id ?>" name="target_id">
+                            <input type="hidden" value="event" name="target_type">
+                            <input type="hidden" value="admin_panel-events_approval.php" name="from">
+                            <input type="hidden" value="0" name="status">
+
+                            <button type="submit" class="flex-fill d-flex justify-content-center align-items-center" style="all: unset;">
+                                <div class="like d-flex align-items-center gap-3">
+                                    <img src="icons/reject.svg" alt="">
+                                    <span class="count">Reject</span>
+                                </div>
+                            </button>
+                        </form>
                     </div>
                 </div>
-
-            </div>
+            <?php } ?>
         </div>
     </div>
 

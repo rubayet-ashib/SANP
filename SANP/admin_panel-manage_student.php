@@ -92,11 +92,7 @@ if ($_SESSION['role'] != "admin") {
                         <li>
                             <hr>
                         </li>
-                        <li><a href="admin_panel-publish_notice.php">Publish Notice</a></li>
-                        <li>
-                            <hr>
-                        </li>
-                        <li><a href="admin_panel-update-status.php">Update Status</a></li>
+                        <li><a href="admin_panel-manage_notice.php">Manage Notice</a></li>
                         <li>
                             <hr>
                         </li>
@@ -122,8 +118,7 @@ if ($_SESSION['role'] != "admin") {
                 <ul>
                     <li><a href="admin_panel-events_approval.php">Events Approval</a></li>
                     <li><a href="admin_panel-jobs_approval.php">Jobs Approval</a></li>
-                    <li><a href="admin_panel-publish_notice.php">Publish Notice</a></li>
-                    <li><a href="admin_panel-update-status.php">Update Status</a></li>
+                    <li><a href="admin_panel-manage_notice.php">Manage Notice</a></li>
                     <li><a href="admin_panel-manage_student.php" class="active">Manage Student</a></li>
                 </ul>
             </div>

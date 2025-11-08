@@ -287,7 +287,7 @@ body:has(.offcanvas.show) .sidebar-toggle {
   height: 60px;
   border-radius: 50%;
   overflow: hidden;
-  background-color: var(--primary-color);
+  background-color: #4c00ff;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -321,6 +321,11 @@ body:has(.offcanvas.show) .sidebar-toggle {
   transition: max-height 0.4s ease;
   text-align: justify;
   padding-right: 5px;
+}
+
+.text-wrapper p {
+  white-space: pre-line;
+  overflow-wrap: break-word;
 }
 
 .text-wrapper::-webkit-scrollbar {
@@ -399,11 +404,11 @@ body:has(.offcanvas.show) .sidebar-toggle {
 }
 
 .like-container:hover {
-  background-color: #efefef;
+  background-color: #f6f1ff;
 }
 
 .comment-container:hover {
-  background-color: #efefef;
+  background-color: #f6f1ff;
 }
 
 .like-container:hover img {
@@ -514,7 +519,7 @@ body:has(.offcanvas.show) .sidebar-toggle {
 }
 
 .more-option-btn-close:hover {
-  background-color: #efefef;
+  background-color: #f6f1ff;
 }
 
 /* Modal Body Options */
@@ -536,7 +541,7 @@ body:has(.offcanvas.show) .sidebar-toggle {
 }
 
 .option-body span:hover {
-  background-color: #efefef;
+  background-color: #f6f1ff;
   color: var(--primary-color);
 }
 
@@ -662,12 +667,7 @@ body:has(.offcanvas.show) .sidebar-toggle {
 }
 
 .notice-list::-webkit-scrollbar {
-  width: 8px;
-}
-
-.notice-list::-webkit-scrollbar-thumb {
-  background-color: #ccc;
-  border-radius: 10px;
+  width: 0px;
 }
 
 /* Mentorship section design */
@@ -831,7 +831,7 @@ body:has(.offcanvas.show) .sidebar-toggle {
 }
 
 .approve-container:hover {
-  background-color: #efefef;
+  background-color: #f6f1ff;
 }
 
 .approve-container:hover img {
@@ -863,7 +863,7 @@ body:has(.offcanvas.show) .sidebar-toggle {
 }
 
 .reject-container:hover {
-  background-color: #efefef;
+  background-color: #f6f1ff;
 }
 
 .reject-container:hover img {
@@ -1051,4 +1051,31 @@ body:has(.modal.show) .create-post-btn {
   color: var(--primary-color);
   background-color: #f6f1ff;
   text-transform: uppercase;
+}
+
+/* Tag box design */
+.tag-box {
+  background-color: #f6f1ff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+  padding: 5px 10px;
+}
+
+/* Notice delete button design  */
+.notice-delete-btn {
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  background-color: transparent;
+  transition: background-color 0.3s ease;
+}
+
+.notice-delete-btn:hover {
+  background-color: #f6f1ff;
 }

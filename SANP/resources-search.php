@@ -80,10 +80,6 @@ if (!isset($_SESSION['status'])) {
                         <li>
                             <hr>
                         </li>
-                        <li><a href="resources-add.php">Add</a></li>
-                        <li>
-                            <hr>
-                        </li>
                         <li><a href="resources-search.php" class="active">Search</a></li>
                     </ul>
                 </div>
@@ -105,7 +101,6 @@ if (!isset($_SESSION['status'])) {
             <div class="offcanvas-body">
                 <ul>
                     <li><a href="resources-resources.php">Resources</a></li>
-                    <li><a href="resources-add.php">Add</a></li>
                     <li><a href="resources-search.php" class="active">Search</a></li>
                 </ul>
             </div>

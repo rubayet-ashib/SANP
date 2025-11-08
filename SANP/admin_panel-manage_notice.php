@@ -92,11 +92,7 @@ if ($_SESSION['role'] != "admin") {
                         <li>
                             <hr>
                         </li>
-                        <li><a href="admin_panel-publish_notice.php" class="active">Publish Notice</a></li>
-                        <li>
-                            <hr>
-                        </li>
-                        <li><a href="admin_panel-update-status.php">Update Status</a></li>
+                        <li><a href="admin_panel-manage_notice.php" class="active">Manage Notice</a></li>
                         <li>
                             <hr>
                         </li>
@@ -122,13 +118,104 @@ if ($_SESSION['role'] != "admin") {
                 <ul>
                     <li><a href="admin_panel-events_approval.php">Events Approval</a></li>
                     <li><a href="admin_panel-jobs_approval.php">Jobs Approval</a></li>
-                    <li><a href="admin_panel-publish_notice.php" class="active">Publish Notice</a></li>
-                    <li><a href="admin_panel-update-status.php">Update Status</a></li>
+                    <li><a href="admin_panel-manage_notice.php" class="active">Manage Notice</a></li>
                     <li><a href="admin_panel-manage_student.php">Manage Student</a></li>
                 </ul>
             </div>
         </div>
 
+        <!-- Notice section -->
+        <div class="post-container" style="padding: 2.5rem;">
+            <div class="d-flex align-items-center justify-content-between ms-2 me-3 mb-3" style="cursor: pointer;">
+                <!-- Title -->
+                <h3 class="mb-3">Notices</h3>
+
+                <!-- Publish Notice Button div -->
+                <div class="download-btn" type="div" data-bs-toggle="modal" data-bs-target="#publishNoticeModal">
+                    <img src="icons/add.svg" alt="Add" style="height: 24px;">
+                    Add
+                </div>
+            </div>
+
+
+            <!-- Scrollable notice list -->
+            <div class="notice-list">
+                <?php
+                $sql = "SELECT * FROM notices ORDER BY timestamp DESC";
+                $stmt = $db->prepare($sql);
+                if (!$stmt) {
+                    die("Prepare failed: " . $db->error);
+                }
+                $stmt->execute();
+                $rel = $stmt->get_result();
+                while ($row = $rel->fetch_assoc()) {
+                    $notice_id = $row['notice_id'];
+                    $title = $row['title'];
+                    $publish_date = date("M j, Y", strtotime($row['timestamp']));
+                    $filepath = $row['filepath'];
+                ?>
+                    <div class="notice-card">
+                        <div class="notice-text">
+                            <p class="notice-title mb-0"><?= $title ?></p>
+                            <p class="notice-date mb-0">Published on: <?= $publish_date ?></p>
+                        </div>
+
+                        <form action="delete_notice-manager.php" method="POST" class="me-3">
+                            <input type="hidden" name="notice_id" value="<?= $notice_id ?>">
+                            <button type="submit" class="notice-delete-btn" name="delete-btn"><img src="icons/delete-hover.svg" alt="Delete" style="height: 28px; width: 28px;"></button>
+                        </form>
+
+                        <form action="download.php" method="get">
+                            <input type="hidden" name="filepath" value="<?= $filepath ?>">
+                            <button type="submit" class="download-btn">Download</button>
+                        </form>
+                    </div>
+                <?php } ?>
+            </div>
+        </div>
+
+        <!-- Publish Notice Section -->
+
+        <!-- Publish Notice Modal -->
+        <div class="modal fade p-3" id="publishNoticeModal" tabindex="-1" aria-labelledby="publishNoticeModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-create-post modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="more-option-btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            <img src="icons/close-btn.svg" alt="">
+                        </div>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class=" create-post-modal-body d-flex flex-column justify-content-center align-items-center w-100 p-4">
+                        <h3 class="mb-3">Publish Notice</h3>
+                        <form action="publish_notice-manager.php" method="POST" enctype="multipart/form-data" class="w-100 justify-content-center">
+                            <!-- Notice Title -->
+                            <div class="mb-4 d-flex flex-column align-items-start">
+                                <label for="noticeTitle" class="form-label ms-2">Title</label>
+                                <input type="text" class="form-control" id="noticeTitle" placeholder="Enter notice title" required name="title">
+                            </div>
+
+                            <!-- Upload File -->
+                            <div class="mb-3 d-flex flex-column align-items-start">
+                                <label for="noticeFile" class="form-label ms-2">Attach File (Required)</label>
+                                <input type="file" class="form-control" id="noticeFile" accept="application/pdf" name="pdf" required>
+                                <small class="text-muted ms-1 mt-1">Max size: 2MB</small>
+                            </div>
+
+                            <!-- Default parameters -->
+                            <input type="hidden" value="admin_panel-manage_notice.php" name="from">
+
+                            <!-- Publish Button -->
+                            <div class="d-flex justify-content-center mb-3">
+                                <button type="submit" class="btn btn-primary" name="publish-btn">Publish</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="bootstrap/js/bootstrap.min.js"></script>

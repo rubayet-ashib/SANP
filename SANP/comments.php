@@ -97,7 +97,7 @@ if (!isset($_POST['post_id'])) {
                 $row = $stmt->get_result()->fetch_assoc();
 
                 // Get user info who posted
-                $user = $row['sid'];
+                $posted_by = $row['sid'];
 
                 // Prepare and execute query for user info
                 $sql = "SELECT * FROM users WHERE sid = ?";
@@ -105,7 +105,7 @@ if (!isset($_POST['post_id'])) {
                 if (!$stmt1) {
                     die("Prepare failed: " . $db->error);
                 }
-                $stmt1->bind_param("s", $user);
+                $stmt1->bind_param("s", $posted_by);
                 $stmt1->execute();
                 $user_data = $stmt1->get_result()->fetch_assoc();
                 $user_name = $user_data['name'];
@@ -177,6 +177,8 @@ if (!isset($_POST['post_id'])) {
                         if ($user_data['avatar'] != NULL) $user_avatar = $user_data['avatar'];
                         $comment_date = date("M j, Y", strtotime($row['timestamp']));
                         $comment_text = $row['comment'];
+                        $tmp_comment_id = $row['post_id'] . $row['sid'] . $row['timestamp'];
+                        $comment_id = str_replace(' ', '', $tmp_comment_id);
                     ?>
                         <div class="post-card">
                             <!-- Header -->
@@ -193,12 +195,12 @@ if (!isset($_POST['post_id'])) {
                                 </div>
 
                                 <!-- More option trigger button -->
-                                <div type="div" class="more-option" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                <div type="div" class="more-option" data-bs-toggle="modal" data-bs-target="#optionModal-<?php echo $comment_id; ?>">
                                     <img src="icons/more-option.svg" alt="">
                                 </div>
 
                                 <!-- More option menu -->
-                                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                                <div class="modal fade" id="optionModal-<?php echo $comment_id; ?>" tabindex="-1" aria-labelledby="optionModalLabel"
                                     aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
@@ -209,9 +211,89 @@ if (!isset($_POST['post_id'])) {
                                             </div>
                                             <!-- Modal body -->
                                             <div class="option-body d-flex flex-column justify-content-center align-items-center">
-                                                <span class="w-100 ">Edit</span>
-                                                <span class="w-100 ">Delete</span>
-                                                <span class="w-100 ">Report</span>
+                                                <?php if ($user == $_SESSION['sid']) { ?>
+                                                    <span class="w-100" data-bs-toggle="modal" data-bs-target="#editModal-<?php echo $comment_id; ?>">Edit</span>
+                                                <?php } ?>
+                                                <?php if ($user == $_SESSION['sid'] || $_SESSION['role'] == "admin" || $_SESSION['sid'] == $posted_by) { ?>
+                                                    <span class="delete-post w-100 " data-post-id="<?php echo $comment_id ?>">Delete</span>
+                                                <?php } ?>
+                                                <?php if ($user != $_SESSION['sid']) { ?>
+                                                    <span class="w-100 " data-bs-toggle="modal" data-bs-target="#reportModal-<?php echo $comment_id; ?>">Report</span>
+                                                <?php } ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Edit Post Modal  -->
+                                <div class="modal fade p-3" id="editModal-<?php echo $comment_id; ?>" tabindex="-1" aria-labelledby="editModalLabel"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-create-post modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <div class="more-option-btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                                    <img src="icons/close-btn.svg" alt="">
+                                                </div>
+                                            </div>
+
+                                            <!-- Modal body -->
+                                            <div class=" create-post-modal-body d-flex flex-column justify-content-center align-items-center w-100 p-3">
+                                                <h3 class="mb-3">Edit Comment</h3>
+                                                <form action="edit_comment-manager.php" method="POST" class="w-100">
+
+                                                    <!-- Description -->
+                                                    <div class="mb-3 d-flex flex-column align-items-start">
+                                                        <label for="postDescription" class="form-label ms-2">Your comment</label>
+                                                        <textarea class="form-control" id="postDescription" rows="5" placeholder="Write something..."
+                                                            required name="comment_text"><?php echo $comment_text ?></textarea>
+                                                    </div>
+
+                                                    <!-- Default Parameters  -->
+                                                    <input type="hidden" value="<?php echo $comment_id ?>" name="comment_id">
+
+                                                    <!-- Update Button -->
+                                                    <div class="d-flex justify-content-end mb-2">
+                                                        <button type="submit" class="btn btn-primary" name="update-btn">Update</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Report Post Modal  -->
+                                <div class="modal fade p-3" id="reportModal-<?php echo $comment_id; ?>" tabindex="-1" aria-labelledby="reportModalLabel"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-create-post modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <div class="more-option-btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                                    <img src="icons/close-btn.svg" alt="">
+                                                </div>
+                                            </div>
+
+                                            <!-- Modal body -->
+                                            <div class=" create-post-modal-body d-flex flex-column justify-content-center align-items-center w-100 p-3">
+                                                <h3 class="mb-3">Report Comment</h3>
+                                                <form action="report-manager.php" method="POST" class="w-100">
+
+                                                    <!-- Description -->
+                                                    <div class="mb-3 d-flex flex-column align-items-start">
+                                                        <label for="postDescription" class="form-label ms-2">Description</label>
+                                                        <textarea class="form-control" id="postDescription" rows="7" placeholder="Type your report..."
+                                                            required name="des"></textarea>
+                                                    </div>
+
+                                                    <!-- Default Parameters  -->
+                                                    <input type="hidden" value="<?php echo $comment_id ?>" name="target_id">
+
+                                                    <input type="hidden" value="comment" name="type">
+
+                                                    <!-- Report Button -->
+                                                    <div class="d-flex justify-content-end mb-2">
+                                                        <button type="submit" class="btn btn-primary" name="report-btn">Report</button>
+                                                    </div>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
@@ -293,6 +375,40 @@ if (!isset($_POST['post_id'])) {
                     }
                 });
             }
+        });
+    </script>
+
+    <!-- Send comment info to delete_comment page  -->
+    <script>
+        document.querySelectorAll(".delete-post").forEach(button => {
+            button.addEventListener("click", function()
+            {
+                const commentId = this.getAttribute("data-post-id");
+                const fromPage = window.location.href;
+
+                // Create a form dynamically
+                const form = document.createElement("form");
+                form.method = "POST";
+                form.action = "delete_comment-manager.php";
+
+                // Hidden input 1: comment_id
+                const input1 = document.createElement("input");
+                input1.type = "hidden";
+                input1.name = "comment_id";
+                input1.value = commentId;
+                form.appendChild(input1);
+
+                // Hidden input 2: from_page
+                const input2 = document.createElement("input");
+                input2.type = "hidden";
+                input2.name = "from";
+                input2.value = fromPage;
+                form.appendChild(input2);
+
+                // Add and submit
+                document.body.appendChild(form);
+                form.submit();
+            });
         });
     </script>
 </body>

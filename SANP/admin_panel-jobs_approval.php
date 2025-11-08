@@ -92,7 +92,7 @@ if ($_SESSION['role'] != "admin") {
                         <li>
                             <hr>
                         </li>
-                        <li><a href="admin_panel-publish_notice.php">Publish Notice</a></li>
+                        <li><a href="admin_panel-manage_notice.php">Manage Notice</a></li>
                         <li>
                             <hr>
                         </li>
@@ -118,83 +118,102 @@ if ($_SESSION['role'] != "admin") {
                 <ul>
                     <li><a href="admin_panel-events_approval.php">Events Approval</a></li>
                     <li><a href="admin_panel-jobs_approval.php" class="active">Jobs Approval</a></li>
-                    <li><a href="admin_panel-publish_notice.php">Publish Notice</a></li>
+                    <li><a href="admin_panel-manage_notice.php">Manage Notice</a></li>
                     <li><a href="admin_panel-manage_student.php">Manage Student</a></li>
                 </ul>
             </div>
         </div>
         <!-- Post Container -->
         <div class="post-container">
+            <?php
+            // Prepare and execute query for post info
+            $sql = "SELECT * FROM job_posts WHERE approve_status = 0 ORDER BY timestamp";
+            $stmt = $db->prepare($sql);
+            if (!$stmt) {
+                die("Prepare failed: " . $db->error);
+            }
+            $stmt->execute();
+            $rel = $stmt->get_result();
 
-            <div class="post-card">
-                <!-- Header -->
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="d-flex align-items-center">
-                        <div class="profile-pic me-3">
-                            <img src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=500"
-                                alt="Profile Picture" />
-                        </div>
+            // Access database
+            while ($row = $rel->fetch_assoc()) {
+                // Get job_id and user info who posted
+                $job_id = $row['job_id'];
+                $user = $row['posted_by'];
+                $job_des = $row['description'];
+                $job_title = $row['title'];
+                $job_date = date("M j, Y", strtotime($row['timestamp']));
+                $company = $row['company'];
+                $vacancies = $row['vacancies'];
+            ?>
+                <div class="post-card">
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        
+                        <!-- Title -->
                         <div>
-                            <h6 class="mb-0 fw-bold">Rubayet Ashib Badhon</h6>
-                            <small class="text-muted">22/09/2025</small>
+                            <h6 class="notice-title" style="font-size: 1.5rem;"><?= $job_title ?></h6>
+                            <small class="text-muted"><?php echo $job_date ?></small>
                         </div>
+
+                        <!-- Verify Content -->
+                        <div class="d-flex flex-column align-items-end">
+                            <button class="download-btn">Verify</button>
+                        </div>
+
                     </div>
 
-                    <!-- Contact user -->
-                    <div class="d-flex flex-column align-items-end">
-                        <button class="download-btn">Contact</button>
+                    <!-- Description -->
+                    <div class="text-wrapper pb-3">
+                        <div class="d-flex justify-content-between mb-1 mt-1">
+                            <p class="notice-title" style="font-size: 1.20rem;">Company Name: <span style="background-color: #f6f1ff; border-radius: 6px; padding: 6px 12px; color: var(--primary-color);"><?php echo $company ?> </span></p>
+                            <p class="notice-title muted-text" style="font-size: 1.20rem;">Available Vacancies: <span style="background-color: #f6f1ff; border-radius: 6px; padding: 6px 12px; color: var(--primary-color);"><?php echo $vacancies ?> </span></p>
+                        </div>
+                        <hr>
+                        <p class="description mb-2"><?php echo $job_des ?></p>
+                    </div>
+
+                    <!-- Post Footer -->
+                    <div class="post-footer d-flex align-items-center">
+                        <!-- Approve Section -->
+                        <form action="content_approval.php" method="POST" class="approve-container flex-fill d-flex justify-content-center align-items-center">
+
+                            <!-- Default parameters -->
+                            <input type="hidden" value="<?= $job_id ?>" name="target_id">
+                            <input type="hidden" value="job post" name="target_type">
+                            <input type="hidden" value="admin_panel-jobs_approval.php" name="from">
+                            <input type="hidden" value="1" name="status">
+
+                            <button type="submit" class="flex-fill d-flex justify-content-center align-items-center" style="all: unset;">
+                                <div class="like d-flex align-items-center gap-3">
+                                    <img src="icons/approve.svg" alt="">
+                                    <span class="count">Approve</span>
+                                </div>
+                            </button>
+                        </form>
+
+                        <!-- Divider -->
+                        <div class="divider"></div>
+
+                        <!-- Reject Section -->
+                        <form action="content_approval.php" method="POST" class="reject-container flex-fill d-flex justify-content-center align-items-center">
+
+                            <!-- Default parameters -->
+                            <input type="hidden" value="<?= $job_id ?>" name="target_id">
+                            <input type="hidden" value="job post" name="target_type">
+                            <input type="hidden" value="admin_panel-jobs_approval.php" name="from">
+                            <input type="hidden" value="0" name="status">
+
+                            <button type="submit" class="flex-fill d-flex justify-content-center align-items-center" style="all: unset;">
+                                <div class="like d-flex align-items-center gap-3">
+                                    <img src="icons/reject.svg" alt="">
+                                    <span class="count">Reject</span>
+                                </div>
+                            </button>
+                        </form>
                     </div>
                 </div>
-
-                <!-- Description -->
-                <div class="text-wrapper pb-3">
-                    <p class="notice-title mb-0">Company: Google</p>
-                    <p class="notice-title mb-2">Vacancies: 5</p>
-                    <p class="description mb-2">
-                        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Rerum aperiam aut inventore
-                        esse
-                        enim
-                        officia molestiae incidunt, totam vero qui labore dolore iure, voluptatem beatae eaque
-                        nostrum
-                        est.
-                        Molestias odio praesentium nam recusandae atque inventore ad magnam iure quidem numquam
-                        quibusdam
-                        dolores illo odit error ullam totam fugiat quia deserunt voluptas natus mollitia
-                        reprehenderit,
-                        exercitationem sint optio. Sequi officiis dignissimos repellat perferendis eos odit
-                        optio culpa
-                        quod
-                        consequuntur ullam incidunt accusamus, quaerat excepturi cupiditate aut necessitatibus
-                        sit earum
-                        facilis
-                        inventore nihil in error fugit dolore? Laborum, esse delectus facilis eius laudantium
-                        autem rem quia consectetur distinctio perferendis?
-                    </p>
-                </div>
-
-                <!-- Post Footer -->
-                <div class="post-footer d-flex align-items-center">
-                    <!-- Approve Section -->
-                    <div class="approve-container flex-fill d-flex justify-content-center align-items-center">
-                        <div class="like d-flex align-items-center gap-3">
-                            <img src="icons/approve.svg" alt="">
-                            <span class="count">Approve</span>
-                        </div>
-                    </div>
-
-                    <!-- Divider -->
-                    <div class="divider"></div>
-
-                    <!-- Reject Section -->
-                    <div class="reject-container flex-fill d-flex justify-content-center align-items-center">
-                        <div class="comment d-flex align-items-center gap-3">
-                            <img src="icons/reject.svg" alt="">
-                            <span class="count">Reject</span>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
+            <?php } ?>
         </div>
     </div>
 

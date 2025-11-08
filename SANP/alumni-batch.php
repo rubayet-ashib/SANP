@@ -264,7 +264,7 @@ if ($_SESSION['role'] != "alumni") {
                                             <!-- Image Upload -->
                                             <div class="mb-3 d-flex flex-column align-items-start">
                                                 <label for="postImage" class="form-label ms-2">Upload
-                                                    Image</label>
+                                                    Image (Optional)</label>
                                                 <input type="file" class="form-control" id="postImage" accept="image/*" name="image">
                                                 <small class="text-muted ms-1 mt-1">Max size: 2MB</small>
                                             </div>
@@ -453,7 +453,7 @@ if ($_SESSION['role'] != "alumni") {
                             <!-- Image Upload -->
                             <div class="mb-3 d-flex flex-column align-items-start">
                                 <label for="postImage" class="form-label ms-2">Upload
-                                    Image</label>
+                                    Image (Optional)</label>
                                 <input type="file" class="form-control" id="postImage" accept="image/*" name="image">
                                 <small class="text-muted ms-1 mt-1">Max size: 2MB</small>
                             </div>
